@@ -866,7 +866,8 @@ function updateStats() {
   document.getElementById('statIdeas').textContent = allIdeas.length;
   document.getElementById('statVotes').textContent = totalVotes;
   // Unique participants = unique submitters + unique voters (approx)
-  document.getElementById('statStudents').textContent = allIdeas.length + totalVotes;
+  // Unique participants = number of idea submitters (each is unique by email)
+  document.getElementById('statStudents').textContent = allIdeas.length;
   document.getElementById('countIdeas').textContent = allIdeas.length;
 }
 
@@ -920,12 +921,27 @@ function launchConfetti() {
   draw();
 }
 
-// Auto-refresh every 8 seconds
-setInterval(() => {
-  const activeTab = document.querySelector('.nav-tab.active');
-  if (activeTab?.dataset.tab === 'ideas') loadIdeas();
-  if (activeTab?.dataset.tab === 'results') loadResults();
-}, 8000);
+// Silent auto-refresh every 30 seconds (no visual reload)
+setInterval(async () => {
+  try {
+    const res = await fetch(API + '/api/ideas');
+    const data = await res.json();
+    const newCount = data.ideas.length;
+    const newVotes = data.ideas.reduce((s, i) => s + i.votes, 0);
+    const oldCount = allIdeas.length;
+    const oldVotes = allIdeas.reduce((s, i) => s + i.votes, 0);
+    // Only re-render if data actually changed
+    if (newCount !== oldCount || newVotes !== oldVotes) {
+      allIdeas = data.ideas;
+      updateStats();
+      const activeTab = document.querySelector('.nav-tab.active');
+      if (activeTab?.dataset.tab === 'ideas') {
+        document.getElementById('ideasContainer').innerHTML = allIdeas.map((idea, i) => renderIdeaCard(idea, i, false)).join('');
+      }
+      if (activeTab?.dataset.tab === 'results') loadResults();
+    }
+  } catch (e) {}
+}, 30000);
 
 // If already submitted, show voting tab
 if (hasSubmitted) {
