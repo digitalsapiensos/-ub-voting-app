@@ -537,12 +537,12 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.18); }
       <div class="form-group">
         <label class="form-label">🎯 Título del Proyecto <span class="required">*</span></label>
         <div class="form-hint">Un nombre corto y memorable — piensa en cómo lo presentarías en un pitch de 10 segundos</div>
-        <input type="text" id="fTitle" placeholder="Ej: DeFi Portfolio Optimizer — Rebalanceo automático con IA" required maxlength="120">
+        <input type="text" id="fTitle" placeholder="Ej: Asistente de Gastos — Analiza tus tickets y controla tu presupuesto" required maxlength="120">
       </div>
       <div class="form-group">
         <label class="form-label">📝 Descripción <span class="required">*</span></label>
         <div class="form-hint">¿Qué problema resuelve? ¿Para quién? ¿Por qué es relevante para fintech?</div>
-        <textarea id="fDesc" placeholder="Describe la idea en 2-3 frases. Ej: Una app que analiza el portafolio DeFi del usuario y sugiere rebalanceos automáticos basados en riesgo, correlación y sentimiento de mercado..." required maxlength="1000"></textarea>
+        <textarea id="fDesc" placeholder="Describe la idea en 2-3 frases. Ej: Un agente que lee tus tickets de compra (foto o PDF), extrae los gastos, los clasifica por categoría y te avisa si te pasas del presupuesto mensual..." required maxlength="1000"></textarea>
       </div>
 
       <div class="form-separator">Detalles técnicos</div>
@@ -550,17 +550,17 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.18); }
       <div class="form-group">
         <label class="form-label">⚡ Funcionalidades Clave</label>
         <div class="form-hint">¿Qué hace concretamente? Lista las 3-5 funciones principales</div>
-        <textarea id="fFunc" placeholder="1. Dashboard con métricas del portafolio en tiempo real&#10;2. Análisis de riesgo basado en correlación de activos&#10;3. Alertas automáticas de rebalanceo&#10;4. Ejecución de trades con confirmación del usuario" maxlength="1500"></textarea>
+        <textarea id="fFunc" placeholder="1. Escanear tickets de compra (foto o PDF)&#10;2. Clasificar gastos por categoría (comida, transporte, ocio...)&#10;3. Dashboard con resumen mensual&#10;4. Alertas si superas el presupuesto" maxlength="1500"></textarea>
       </div>
       <div class="form-group">
         <label class="form-label">🤖 Rol del Agente IA</label>
         <div class="form-hint">¿Qué papel juega el agente? ¿Qué decisiones toma? ¿Con qué nivel de autonomía?</div>
-        <textarea id="fAgent" placeholder="El agente actúa como analista de riesgos: monitoriza posiciones, calcula métricas de riesgo, genera recomendaciones de rebalanceo y puede ejecutar trades pre-aprobados por el usuario" maxlength="1000"></textarea>
+        <textarea id="fAgent" placeholder="El agente actúa como asistente financiero personal: recibe fotos de tickets, extrae datos con visión IA, clasifica gastos y genera alertas cuando detecta que vas mal de presupuesto" maxlength="1000"></textarea>
       </div>
       <div class="form-group">
         <label class="form-label">🔧 Herramientas e Integraciones</label>
         <div class="form-hint">APIs, MCPs, conexiones, servicios externos que necesitaría el agente</div>
-        <textarea id="fTools" placeholder="- CoinGecko API (precios)&#10;- DeFi Llama API (TVL, yields)&#10;- OpenAI API (análisis de sentimiento)&#10;- Web3.js (conexión wallet)&#10;- MCP: Browser para scraping de datos on-chain" maxlength="1000"></textarea>
+        <textarea id="fTools" placeholder="- OpenAI API (visión para leer tickets)&#10;- Google Sheets API (guardar datos)&#10;- Telegram Bot (recibir fotos y enviar alertas)&#10;- MCP: File system para guardar histórico" maxlength="1000"></textarea>
       </div>
       <button type="submit" class="btn btn-primary" id="submitBtn">
         <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
