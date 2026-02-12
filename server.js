@@ -165,6 +165,21 @@ app.get('/api/results', async (req, res) => {
   }
 });
 
+// Admin: delete idea
+app.delete('/api/ideas/:id', async (req, res) => {
+  const adminKey = req.headers['x-admin-key'];
+  if (adminKey !== (process.env.ADMIN_KEY || 'venom2026')) {
+    return res.status(401).json({ error: 'No autorizado' });
+  }
+  try {
+    await pool.query('DELETE FROM votes WHERE idea_id = $1', [req.params.id]);
+    await pool.query('DELETE FROM ideas WHERE id = $1', [req.params.id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Health check
 app.get('/api/health', async (req, res) => {
   try {
