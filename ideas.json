@@ -1,0 +1,19 @@
+{
+  "ideas": [
+    {
+      "id": "mliqgbu0pctx4",
+      "name": "Eduard More",
+      "email": "admin@genaisapiens.com",
+      "title": "prueba",
+      "description": "esto es una prueba",
+      "functionalities": ".\nrevisa que tengamos esto y si no lo tenemos realiza los cambios pertinentes en @documentación siguiendo @Instructions.md, documentando los cambios en @Changelog.md\n\ny recuerda el @Readme.md",
+      "agentRole": "dddd",
+      "tools": "dddd",
+      "votes": 1,
+      "createdAt": "2026-02-12T00:41:02.184Z"
+    }
+  ],
+  "votes": {
+    "admin@genaisapiens.com": "mliqgbu0pctx4"
+  }
+}
