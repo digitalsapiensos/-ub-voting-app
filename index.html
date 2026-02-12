@@ -790,11 +790,18 @@ function renderIdeaCard(idea, index, isResult) {
           <span>${idea.votes}</span>
           <span class="vote-label">voto${idea.votes !== 1 ? 's' : ''}</span>
         </div>
-        ${!isPast && !isResult ? `
-          <button class="btn btn-vote ${isVoted ? 'voted' : ''}" onclick="vote('${idea.id}')" ${isVoted ? 'disabled' : ''}>
-            ${isVoted ? '✓ Tu voto' : '🗳️ Votar esta'}
-          </button>
-        ` : ''}
+        <div style="display:flex;gap:8px;align-items:center;">
+          ${!isPast && userEmail && idea.email === userEmail ? `
+            <button class="btn btn-vote" onclick="editIdea('${idea.id}')" style="border-color:rgba(6,182,212,0.25);color:#67e8f9;">
+              ✏️ Editar
+            </button>
+          ` : ''}
+          ${!isPast && !isResult ? `
+            <button class="btn btn-vote ${isVoted ? 'voted' : ''}" onclick="vote('${idea.id}')" ${isVoted ? 'disabled' : ''}>
+              ${isVoted ? '✓ Tu voto' : '🗳️ Votar esta'}
+            </button>
+          ` : ''}
+        </div>
       </div>
       <div class="vote-bar-bg"><div class="vote-bar" style="width:${voteWidth}%"></div></div>
     </div>
@@ -919,6 +926,77 @@ function launchConfetti() {
     else ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
   draw();
+}
+
+// Edit idea
+async function editIdea(ideaId) {
+  const idea = allIdeas.find(i => i.id === ideaId);
+  if (!idea) return;
+
+  // Switch to submit tab and populate form
+  document.getElementById('tabSubmit').click();
+  
+  const banner = document.getElementById('submittedBanner');
+  const form = document.getElementById('ideaForm');
+  banner.classList.remove('show');
+  form.style.opacity = '1';
+  form.style.pointerEvents = 'auto';
+  
+  document.getElementById('fName').value = idea.name;
+  document.getElementById('fName').disabled = true;
+  document.getElementById('fEmail').value = idea.email || userEmail;
+  document.getElementById('fEmail').disabled = true;
+  document.getElementById('fTitle').value = idea.title;
+  document.getElementById('fDesc').value = idea.description;
+  document.getElementById('fFunc').value = idea.functionalities || '';
+  document.getElementById('fAgent').value = idea.agentRole || '';
+  document.getElementById('fTools').value = idea.tools || '';
+
+  // Change submit button to update
+  const btn = document.getElementById('submitBtn');
+  btn.innerHTML = '✏️ Actualizar Idea';
+  btn.dataset.editId = ideaId;
+
+  // Remove old listener and add edit listener
+  const newForm = form.cloneNode(true);
+  form.parentNode.replaceChild(newForm, form);
+  
+  newForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const editBtn = newForm.querySelector('#submitBtn');
+    editBtn.disabled = true;
+    editBtn.textContent = 'Actualizando...';
+
+    try {
+      const res = await fetch(API + '/api/ideas/' + ideaId, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: userEmail,
+          title: newForm.querySelector('#fTitle').value.trim(),
+          description: newForm.querySelector('#fDesc').value.trim(),
+          functionalities: newForm.querySelector('#fFunc').value.trim(),
+          agentRole: newForm.querySelector('#fAgent').value.trim(),
+          tools: newForm.querySelector('#fTools').value.trim()
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      showToast('✅ ¡Idea actualizada!');
+      // Reset form state
+      newForm.querySelector('#fName').disabled = false;
+      newForm.querySelector('#fEmail').disabled = false;
+      editBtn.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Enviar Mi Idea';
+      delete editBtn.dataset.editId;
+      updateFormState();
+      setTimeout(() => document.getElementById('tabIdeas').click(), 500);
+    } catch (err) {
+      showToast(err.message || 'Error al actualizar', 'error');
+      editBtn.disabled = false;
+      editBtn.textContent = '✏️ Actualizar Idea';
+    }
+  });
 }
 
 // Silent auto-refresh every 30 seconds (no visual reload)

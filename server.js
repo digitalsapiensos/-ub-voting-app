@@ -88,7 +88,7 @@ app.post('/api/ideas', async (req, res) => {
 app.get('/api/ideas', async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, name, title, description, functionalities, agent_role as "agentRole", tools, votes, created_at as "createdAt"
+      `SELECT id, name, email, title, description, functionalities, agent_role as "agentRole", tools, votes, created_at as "createdAt"
        FROM ideas ORDER BY votes DESC, created_at ASC`
     );
     res.json({
@@ -161,6 +161,38 @@ app.get('/api/results', async (req, res) => {
     });
   } catch (err) {
     console.error('Results error:', err.message);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// Edit idea (user can edit their own idea by email)
+app.put('/api/ideas/:id', async (req, res) => {
+  if (isPastDeadline()) return res.status(403).json({ error: 'El plazo ha terminado' });
+
+  const { email, title, description, functionalities, agentRole, tools } = req.body;
+  if (!email) return res.status(400).json({ error: 'Email requerido para verificar autoría' });
+
+  try {
+    const idea = await pool.query('SELECT id, email FROM ideas WHERE id = $1', [req.params.id]);
+    if (idea.rows.length === 0) return res.status(404).json({ error: 'Idea no encontrada' });
+    if (idea.rows[0].email !== email.toLowerCase()) {
+      return res.status(403).json({ error: 'Solo puedes editar tu propia idea' });
+    }
+
+    await pool.query(
+      `UPDATE ideas SET 
+        title = COALESCE($1, title),
+        description = COALESCE($2, description),
+        functionalities = COALESCE($3, functionalities),
+        agent_role = COALESCE($4, agent_role),
+        tools = COALESCE($5, tools)
+       WHERE id = $6`,
+      [title?.trim() || null, description?.trim() || null, functionalities?.trim() || null,
+       agentRole?.trim() || null, tools?.trim() || null, req.params.id]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Edit error:', err.message);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
